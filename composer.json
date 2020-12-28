@@ -1,0 +1,14 @@
+{
+    "name": "csweb/global-payments",
+    "description": "Integration with global payments gateway",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Matheus Lopes Santos",
+            "email": "fale_com_lopez@hotmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {}
+}
