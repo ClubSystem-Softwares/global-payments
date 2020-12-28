@@ -2,6 +2,8 @@
 
 namespace CSWeb\GlobalPayments;
 
+use CSWeb\GlobalPayments\Validation\ValidatesTransaction;
+
 /**
  * Class Transacao
  *
@@ -35,6 +37,10 @@ class Transacao
 
     protected $currency = 986;
 
+    protected $cardHolder;
+
+    protected $cardNumber;
+
     protected $expiryDate;
 
     protected $cvv;
@@ -45,7 +51,11 @@ class Transacao
 
     protected $planType = self::PLAN_TYPE_VISTA;
 
+    protected $installments = 1;
+
     public function __construct(array $data)
     {
+        $validator = new ValidatesTransaction($data);
+        $validator->validate();
     }
 }
