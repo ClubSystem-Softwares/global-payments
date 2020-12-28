@@ -17,11 +17,11 @@ class ValidatesTransaction extends Validator
     {
         return [
             'amount'       => ['required', 'numeric'],
-            'order'        => ['required', 'alpha_num', 'size:12'],
+            'order'        => ['required', 'alpha_num', 'max:12'],
             'cardHolder '  => ['required', 'max:60'],
             'cardNumber'   => ['required', 'max:19'],
             'cvv'          => ['required', 'min:3', 'max:4'],
-            'installments' => ['nullable', 'numeric', '12'],
+            'installments' => ['nullable', 'numeric', 'max:12'],
         ];
     }
 
