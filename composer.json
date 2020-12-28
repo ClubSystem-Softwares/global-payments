@@ -19,12 +19,12 @@
     },
     "autoload": {
         "psr-4": {
-            "CSWeb\\GlobalPayments\\": "/src"
+            "CSWeb\\GlobalPayments\\": "./src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "CSWeb\\Tests\\": "/tests"
+            "CSWeb\\Tests\\": "./tests"
         }
     }
 }
