@@ -2,6 +2,7 @@
 
 namespace CSWeb\GlobalPayments\Validation;
 
+use CSWeb\GlobalPayments\Rules\DateRule;
 use CSWeb\GlobalPayments\Validator;
 
 /**
@@ -21,6 +22,7 @@ class ValidatesTransaction extends Validator
             'cardHolder'   => ['required', 'max:60'],
             'cardNumber'   => ['required', 'max:19'],
             'cvv'          => ['required', 'min:3', 'max:4'],
+            'expiryDate'   => ['required', new DateRule()],
             'installments' => ['nullable', 'numeric', 'max:12'],
         ];
     }
@@ -33,6 +35,7 @@ class ValidatesTransaction extends Validator
             'cardHolder'   => 'titular',
             'cardNumber'   => 'número do cartão',
             'installments' => 'parcelas',
+            'expiryDate'   => 'data de vencimento',
         ];
     }
 }

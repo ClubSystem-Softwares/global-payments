@@ -4,6 +4,7 @@ namespace CSWeb\Tests\Validation;
 
 use CSWeb\GlobalPayments\Validation\ValidatesTransaction;
 use CSWeb\GlobalPayments\ValidationException;
+use DateTime;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\TestCase;
 
@@ -181,6 +182,41 @@ class ValidatesTransactionTest extends TestCase
         $validation->validate();
     }
 
+    public function testExpiryDate()
+    {
+        $this->expectException(ValidationException::class);
+        $this->expectExceptionMessage('O campo data de vencimento é obrigatório');
+
+        $data = [
+            'amount'     => 0.00,
+            'order'      => 'ABC123456123',
+            'cardHolder' => 'Matheus Lopes Santos',
+            'cardNumber' => '4111 1111 1111 1111',
+            'cvv'        => 1244,
+        ];
+
+        $validation = new ValidatesTransaction($data);
+        $validation->validate();
+    }
+
+    public function testExpiryDateFormat()
+    {
+        $this->expectException(ValidationException::class);
+        $this->expectExceptionMessage('A data de vencimento deve ser um objeto Datetime');
+
+        $data = [
+            'amount'     => 0.00,
+            'order'      => 'ABC123456123',
+            'cardHolder' => 'Matheus Lopes Santos',
+            'cardNumber' => '4111 1111 1111 1111',
+            'expiryDate' => '1120',
+            'cvv'        => 1244,
+        ];
+
+        $validation = new ValidatesTransaction($data);
+        $validation->validate();
+    }
+
     public function testInstallments()
     {
         $this->expectException(ValidationException::class);
@@ -192,6 +228,7 @@ class ValidatesTransactionTest extends TestCase
             'cardHolder'   => 'Matheus Lopes Santos',
             'cardNumber'   => '4111 1111 1111 1111',
             'cvv'          => 123,
+            'expiryDate'   => new DateTime(),
             'installments' => 'a',
         ];
 
@@ -210,6 +247,7 @@ class ValidatesTransactionTest extends TestCase
             'cardHolder'   => 'Matheus Lopes Santos',
             'cardNumber'   => '4111 1111 1111 1111',
             'cvv'          => 123,
+            'expiryDate'   => new DateTime(),
             'installments' => 15,
         ];
 
