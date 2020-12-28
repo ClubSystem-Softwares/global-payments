@@ -18,7 +18,7 @@ class ValidatesTransaction extends Validator
         return [
             'amount'       => ['required', 'numeric'],
             'order'        => ['required', 'alpha_num', 'max:12'],
-            'cardHolder '  => ['required', 'max:60'],
+            'cardHolder'   => ['required', 'max:60'],
             'cardNumber'   => ['required', 'max:19'],
             'cvv'          => ['required', 'min:3', 'max:4'],
             'installments' => ['nullable', 'numeric', 'max:12'],
@@ -28,12 +28,11 @@ class ValidatesTransaction extends Validator
     public function attributes(): array
     {
         return [
-            'amount'          => 'valor',
-            'order'           => 'código',
-            'card_holder'     => 'titular',
-            'card_number'     => 'número do cartão',
-            'transactionType' => 'tipo de transação',
-            'installments'    => 'parcelas',
+            'amount'       => 'valor',
+            'order'        => 'código',
+            'cardHolder'   => 'titular',
+            'cardNumber'   => 'número do cartão',
+            'installments' => 'parcelas',
         ];
     }
 }
