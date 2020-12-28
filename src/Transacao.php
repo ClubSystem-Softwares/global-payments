@@ -4,6 +4,7 @@ namespace CSWeb\GlobalPayments;
 
 use CSWeb\GlobalPayments\Validation\ValidatesTransaction;
 use DateTime;
+use Illuminate\Support\Str;
 
 /**
  * Class Transacao
@@ -58,6 +59,13 @@ class Transacao
     {
         $validator = new ValidatesTransaction($data);
         $validator->validate();
+
+        foreach ($data as $property => $value) {
+            if (property_exists($this, $property)) {
+                $method = 'set'.Str::title($property);
+                $this->{$method}($value);
+            }
+        }
     }
 
     public function getAmount(): int
@@ -139,7 +147,7 @@ class Transacao
 
     public function setCardNumber($cardNumber): Transacao
     {
-        $this->cardNumber = $cardNumber;
+        $this->cardNumber = preg_replace('/[^0-9]/', '', $cardNumber);
 
         return $this;
     }

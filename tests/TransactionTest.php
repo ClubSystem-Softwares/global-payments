@@ -34,5 +34,32 @@ class TransactionTest extends TestCase
         $transacao = new Transacao($data);
     }
 
+    public function testGettersAndSetters()
+    {
+        $data = [
+            'amount'           => 10.00,
+            'order'            => 'ABC123456123',
+            'cardHolder'       => 'Matheus Lopes Santos',
+            'cardNumber'       => '4111 1111 1111 1111',
+            'cvv'              => 123,
+            'expiryDate'       => new DateTime(),
+            'merchantCode'     => 1234567,
+            'merchantTerminal' => 12301233,
+        ];
+
+        $transacao = new Transacao($data);
+
+        $this->assertEquals(1000, $transacao->getAmount());
+        $this->assertEquals($data['order'], $transacao->getOrder());
+        $this->assertEquals($data['cardHolder'], $transacao->getCardHolder());
+        $this->assertEquals(4111111111111111, $transacao->getCardNumber());
+        $this->assertEquals($data['cvv'], $transacao->getCvv());
+        $this->assertInstanceOf(DateTime::class, $transacao->getExpiryDate());
+        $this->assertEquals($data['merchantCode'], $transacao->getMerchantCode());
+        $this->assertEquals($data['merchantTerminal'], $transacao->getMerchantTerminal());
+        $this->assertEquals(Transacao::TRANSACTION_TYPE, $transacao->getTransactionType());
+        $this->assertEquals(Transacao::ACCOUNT_TYPE_CREDITO, $transacao->getAccountType());
+        $this->assertEquals(Transacao::PLAN_TYPE_VISTA, $transacao->getPlanType());
+    }
 
 }
