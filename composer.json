@@ -10,5 +10,15 @@
         }
     ],
     "minimum-stability": "stable",
-    "require": {}
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "CSWeb\\Global\\": "/src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "CSWeb\\Tests\\": "/tests"
+        }
+    }
 }
