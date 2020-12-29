@@ -3,7 +3,11 @@
 namespace CSWeb\GlobalPayments;
 
 use CSWeb\GlobalPayments\Interfaces\Serializable;
+use DOMDocument;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\{ClientException, ServerException};
+use Illuminate\Support\Str;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class Http
@@ -16,8 +20,12 @@ class WebService
 {
     protected $client;
 
-    public function __construct(bool $sandbox = false)
+    protected $logger;
+
+    public function __construct(bool $sandbox = false, LoggerInterface $logger = null)
     {
+        $this->logger = $logger;
+
         $endpoint = $sandbox
             ? 'https://sis-t.redsys.es:25443' // Sandbox
             : 'https://sisw.globalpaybrasil.com.br'; // Produção
@@ -29,16 +37,42 @@ class WebService
 
     public function send(Serializable $serializable): string
     {
-        $response = $this->client->post('/sis/services/SerClsWSEntrada', [
-            'body'    => $serializable->toXml(),
-            'headers' => [
-                'Content-Type' => 'text/xml',
-            ],
-            'curl'    => [
-                CURLOPT_SSL_VERIFYPEER => false,
-            ],
-        ]);
+        try {
+            $response = $this->client->post('/sis/services/SerClsWSEntrada', [
+                'body'    => $serializable->toXml(),
+                'headers' => [
+                    'Content-Type' => 'text/xml',
+                ],
+                'curl'    => [
+                    CURLOPT_SSL_VERIFYPEER => false,
+                ],
+            ]);
 
-        return $response->getBody()->getContents();
+            return $response->getBody()->getContents();
+        } catch (ClientException | ServerException $e) {
+            $this->parseResponseError(
+                $e->getResponse()->getBody()->getContents()
+            );
+        }
+    }
+
+    protected function parseResponseError(string $error)
+    {
+        if ($this->logger) {
+            $this->logger->error($error);
+        }
+
+        $dom = new DOMDocument();
+        $dom->loadXML($error);
+
+        $fails = $dom->getElementsByTagName('faultstring');
+
+        if ($fails) {
+            foreach ($fails as $row) {
+                throw new ServiceException(Str::after($row->nodeValue, ': '));
+            }
+        }
+
+        throw new ServiceException('An error ocurred during your request. Please try again');
     }
 }
