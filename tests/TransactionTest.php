@@ -2,7 +2,7 @@
 
 namespace CSWeb\Tests;
 
-use CSWeb\GlobalPayments\Transacao;
+use CSWeb\GlobalPayments\Transaction;
 use CSWeb\GlobalPayments\ValidationException;
 use DateTime;
 use PHPUnit\Framework\TestCase;
@@ -31,7 +31,7 @@ class TransactionTest extends TestCase
             'installments' => 15,
         ];
 
-        $transacao = new Transacao($data);
+        $transacao = new Transaction($data);
     }
 
     public function testGettersAndSetters()
@@ -47,7 +47,7 @@ class TransactionTest extends TestCase
             'merchantTerminal' => 12301233,
         ];
 
-        $transacao = new Transacao($data);
+        $transacao = new Transaction($data);
 
         $this->assertEquals(1000, $transacao->getAmount());
         $this->assertEquals($data['order'], $transacao->getOrder());
@@ -57,9 +57,9 @@ class TransactionTest extends TestCase
         $this->assertInstanceOf(DateTime::class, $transacao->getExpiryDate());
         $this->assertEquals($data['merchantCode'], $transacao->getMerchantCode());
         $this->assertEquals($data['merchantTerminal'], $transacao->getMerchantTerminal());
-        $this->assertEquals(Transacao::TRANSACTION_TYPE, $transacao->getTransactionType());
-        $this->assertEquals(Transacao::ACCOUNT_TYPE_CREDITO, $transacao->getAccountType());
-        $this->assertEquals(Transacao::PLAN_TYPE_VISTA, $transacao->getPlanType());
+        $this->assertEquals(Transaction::TRANSACTION_TYPE, $transacao->getTransactionType());
+        $this->assertEquals(Transaction::ACCOUNT_TYPE_CREDITO, $transacao->getAccountType());
+        $this->assertEquals(Transaction::PLAN_TYPE_VISTA, $transacao->getPlanType());
     }
 
 
@@ -77,8 +77,9 @@ class TransactionTest extends TestCase
             'merchantKey'      => 'qwertyasdf0123456789',
         ];
 
-        $transacao = new Transacao($data);
+        $transacao = new Transaction($data);
 
+        file_put_contents(__DIR__ . '/stubs/transacao.xml', $transacao->toXml());
         echo $transacao->toXml();
         /*var_dump();*/
         die();

@@ -15,7 +15,7 @@ use Illuminate\Support\Str;
  * @version 1.0.0
  * @package CSWeb\GlobalPayments
  */
-class Transacao implements Serializable
+class Transaction implements Serializable
 {
     const TRANSACTION_TYPE = 'A';
 
@@ -77,7 +77,7 @@ class Transacao implements Serializable
         return $this->cardHolder;
     }
 
-    public function setCardHolder(string $cardHolder): Transacao
+    public function setCardHolder(string $cardHolder): Transaction
     {
         $this->cardHolder = $cardHolder;
 
@@ -89,7 +89,7 @@ class Transacao implements Serializable
         return $this->planType;
     }
 
-    public function setPlanType(string $planType): Transacao
+    public function setPlanType(string $planType): Transaction
     {
         if (!in_array($planType, [self::PLAN_TYPE_VISTA, self::PLAN_TYPE_PARCELADO])) {
             throw new ValidationException('A forma de pagamento é inválida');
@@ -105,7 +105,7 @@ class Transacao implements Serializable
         return $this->installments;
     }
 
-    public function setInstallments(int $installments): Transacao
+    public function setInstallments(int $installments): Transaction
     {
         $this->installments = $installments;
 
@@ -202,7 +202,7 @@ class Transacao implements Serializable
         return $this->amount;
     }
 
-    public function setAmount(float $amount): Transacao
+    public function setAmount(float $amount): Transaction
     {
         $this->amount = ($amount * 100);
 
@@ -214,7 +214,7 @@ class Transacao implements Serializable
         return $this->order;
     }
 
-    public function setOrder(string $order): Transacao
+    public function setOrder(string $order): Transaction
     {
         $this->order = $order;
 
@@ -226,7 +226,7 @@ class Transacao implements Serializable
         return $this->merchantCode;
     }
 
-    public function setMerchantCode(int $merchantCode): Transacao
+    public function setMerchantCode(int $merchantCode): Transaction
     {
         $this->merchantCode = $merchantCode;
 
@@ -238,7 +238,7 @@ class Transacao implements Serializable
         return $this->merchantTerminal;
     }
 
-    public function setMerchantTerminal(int $merchantTerminal): Transacao
+    public function setMerchantTerminal(int $merchantTerminal): Transaction
     {
         $this->merchantTerminal = $merchantTerminal;
 
@@ -250,7 +250,7 @@ class Transacao implements Serializable
         return $this->merchantKey;
     }
 
-    public function setMerchantKey(string $key): Transacao
+    public function setMerchantKey(string $key): Transaction
     {
         $this->merchantKey = $key;
 
@@ -262,7 +262,7 @@ class Transacao implements Serializable
         return $this->currency;
     }
 
-    public function setCurrency(int $currency): Transacao
+    public function setCurrency(int $currency): Transaction
     {
         $this->currency = $currency;
 
@@ -274,7 +274,7 @@ class Transacao implements Serializable
         return $this->cardNumber;
     }
 
-    public function setCardNumber($cardNumber): Transacao
+    public function setCardNumber($cardNumber): Transaction
     {
         $this->cardNumber = preg_replace('/[^0-9]/', '', $cardNumber);
 
@@ -286,7 +286,7 @@ class Transacao implements Serializable
         return $this->expiryDate;
     }
 
-    public function setExpiryDate(DateTime $expiryDate): Transacao
+    public function setExpiryDate(DateTime $expiryDate): Transaction
     {
         $this->expiryDate = $expiryDate;
 
@@ -298,7 +298,7 @@ class Transacao implements Serializable
         return $this->cvv;
     }
 
-    public function setCvv(string $cvv): Transacao
+    public function setCvv(string $cvv): Transaction
     {
         $this->cvv = $cvv;
 
@@ -310,7 +310,7 @@ class Transacao implements Serializable
         return $this->transactionType;
     }
 
-    public function setTransactionType(string $transactionType): Transacao
+    public function setTransactionType(string $transactionType): Transaction
     {
         if (!in_array($transactionType, [
             self::TRANSACTION_TYPE,
@@ -330,7 +330,7 @@ class Transacao implements Serializable
         return $this->accountType;
     }
 
-    public function setAccountType(string $accountType): Transacao
+    public function setAccountType(string $accountType): Transaction
     {
         if (!in_array($accountType, [self::ACCOUNT_TYPE_CREDITO, self::ACCOUNT_TYPE_DEBITO])) {
             throw new ValidationException('O tipo de pagamento passado é inválido');
