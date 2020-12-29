@@ -62,4 +62,25 @@ class TransactionTest extends TestCase
         $this->assertEquals(Transacao::PLAN_TYPE_VISTA, $transacao->getPlanType());
     }
 
+
+    public function testXmlResponse()
+    {
+        $data = [
+            'amount'           => 10.00,
+            'order'            => 'ABC123456123',
+            'cardHolder'       => 'Matheus Lopes Santos',
+            'cardNumber'       => '4111 1111 1111 1111',
+            'cvv'              => 123,
+            'expiryDate'       => new DateTime(),
+            'merchantCode'     => 1234567,
+            'merchantTerminal' => 12301233,
+            'merchantKey'      => 'qwertyasdf0123456789',
+        ];
+
+        $transacao = new Transacao($data);
+
+        echo $transacao->toXml();
+        /*var_dump();*/
+        die();
+    }
 }

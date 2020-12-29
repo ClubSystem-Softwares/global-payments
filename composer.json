@@ -12,6 +12,7 @@
     "minimum-stability": "stable",
     "require": {
         "php": ">=7.2",
+        "ext-dom": "*",
         "illuminate/validation": "^5.8"
     },
     "require-dev": {

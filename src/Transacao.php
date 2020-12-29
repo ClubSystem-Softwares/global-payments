@@ -2,8 +2,10 @@
 
 namespace CSWeb\GlobalPayments;
 
+use CSWeb\GlobalPayments\Interfaces\Serializable;
 use CSWeb\GlobalPayments\Validation\ValidatesTransaction;
 use DateTime;
+use DOMDocument;
 use Illuminate\Support\Str;
 
 /**
@@ -13,7 +15,7 @@ use Illuminate\Support\Str;
  * @version 1.0.0
  * @package CSWeb\GlobalPayments
  */
-class Transacao
+class Transacao implements Serializable
 {
     const TRANSACTION_TYPE = 'A';
 
@@ -36,6 +38,8 @@ class Transacao
     protected $merchantCode;
 
     protected $merchantTerminal;
+
+    protected $merchantKey;
 
     protected $currency = 986;
 
@@ -62,10 +66,135 @@ class Transacao
 
         foreach ($data as $property => $value) {
             if (property_exists($this, $property)) {
-                $method = 'set'.Str::title($property);
+                $method = 'set' . Str::title($property);
                 $this->{$method}($value);
             }
         }
+    }
+
+    public function getCardHolder(): string
+    {
+        return $this->cardHolder;
+    }
+
+    public function setCardHolder(string $cardHolder): Transacao
+    {
+        $this->cardHolder = $cardHolder;
+
+        return $this;
+    }
+
+    public function getPlanType(): string
+    {
+        return $this->planType;
+    }
+
+    public function setPlanType(string $planType): Transacao
+    {
+        if (!in_array($planType, [self::PLAN_TYPE_VISTA, self::PLAN_TYPE_PARCELADO])) {
+            throw new ValidationException('A forma de pagamento é inválida');
+        }
+
+        $this->planType = $planType;
+
+        return $this;
+    }
+
+    public function getInstallments(): int
+    {
+        return $this->installments;
+    }
+
+    public function setInstallments(int $installments): Transacao
+    {
+        $this->installments = $installments;
+
+        return $this;
+    }
+
+    public function getSignature(): string
+    {
+        $string = $this->getAmount()
+                . $this->getOrder()
+                . $this->getMerchantCode()
+                . $this->getCurrency()
+                . $this->getCardNumber()
+                . $this->getCvv()
+                . $this->getTransactionType()
+                . $this->getMerchantKey();
+
+        return hash('sha256', $string);
+    }
+
+    public function toXml(): string
+    {
+        $soapenvNS = 'http://schemas.xmlsoap.org/soap/envelope/';
+        $webNS     = 'http://webservice.sis.sermepa.es';
+
+        $dom = new DOMDocument('1.0', 'utf-8');
+
+        $dom->preserveWhiteSpace = false;
+        $dom->formatOutput       = true;
+
+        $envelope = $dom->createElementNS($soapenvNS, 'soapenv:Envelope');
+        $envelope->setAttribute('xmlns:web', $webNS);
+
+        $header = $dom->createElement('soapenv:Header');
+        $envelope->appendChild($header);
+
+        $body         = $dom->createElement('soapenv:Body');
+        $web          = $dom->createElement('web:trataPeticion');
+        $dadosEntrada = $dom->createElement('web:datoEntrada');
+
+        $cdata = $dom->createCDATASection(
+            $this->getTransactionData()
+        );
+
+        $dadosEntrada->appendChild($cdata);
+        $web->appendChild($dadosEntrada);
+        $body->appendChild($web);
+        $envelope->appendChild($body);
+
+        $dom->appendChild($envelope);
+
+        return $dom->saveXML();
+    }
+
+    private function getTransactionData()
+    {
+        $dom = new DOMDocument();
+
+        $dom->preserveWhiteSpace = false;
+        $dom->formatOutput       = true;
+
+        $dados      = $dom->createElement('DATOSENTRADA');
+        $amount     = $dom->createElement('DS_MERCHANT_AMOUNT', $this->getAmount());
+        $order      = $dom->createElement('DS_MERCHANT_ORDER', $this->getOrder());
+        $merchant   = $dom->createElement('DS_MERCHANT_MERCHANTCODE', $this->getMerchantCode());
+        $terminal   = $dom->createElement('DS_MERCHANT_TERMINAL', $this->getMerchantTerminal());
+        $currency   = $dom->createElement('DS_MERCHANT_CURRENCY', $this->getCurrency());
+        $cardNumber = $dom->createElement('DS_MERCHANT_PAN', $this->getCardNumber());
+        $expiryDate = $dom->createElement('DS_MERCHANT_EXPIRYDATE', $this->getExpiryDate()->format('ym'));
+        $cvv        = $dom->createElement('DS_MERCHANT_CVV2', $this->getCvv());
+        $type       = $dom->createElement('DS_MERCHANT_TRANSACTIONTYPE', $this->getTransactionType());
+        $account    = $dom->createElement('DS_MERCHANT_ACCOUNTTYPE', $this->getAccountType());
+        $signature  = $dom->createElement('DS_MERCHANT_MERCHANTSIGNATURE', $this->getSignature());
+
+        $dados->appendChild($amount);
+        $dados->appendChild($order);
+        $dados->appendChild($merchant);
+        $dados->appendChild($terminal);
+        $dados->appendChild($currency);
+        $dados->appendChild($cardNumber);
+        $dados->appendChild($expiryDate);
+        $dados->appendChild($cvv);
+        $dados->appendChild($type);
+        $dados->appendChild($account);
+        $dados->appendChild($signature);
+
+        $dom->appendChild($dados);
+
+        return $dom->saveXML($dados);
     }
 
     public function getAmount(): int
@@ -116,6 +245,18 @@ class Transacao
         return $this;
     }
 
+    public function getMerchantKey(): string
+    {
+        return $this->merchantKey;
+    }
+
+    public function setMerchantKey(string $key): Transacao
+    {
+        $this->merchantKey = $key;
+
+        return $this;
+    }
+
     public function getCurrency(): int
     {
         return $this->currency;
@@ -124,18 +265,6 @@ class Transacao
     public function setCurrency(int $currency): Transacao
     {
         $this->currency = $currency;
-
-        return $this;
-    }
-
-    public function getCardHolder(): string
-    {
-        return $this->cardHolder;
-    }
-
-    public function setCardHolder(string $cardHolder): Transacao
-    {
-        $this->cardHolder = $cardHolder;
 
         return $this;
     }
@@ -186,7 +315,7 @@ class Transacao
         if (!in_array($transactionType, [
             self::TRANSACTION_TYPE,
             self::TRANSACTION_TYPE_3DS,
-            self::TRANSACTION_TYPE_PRE
+            self::TRANSACTION_TYPE_PRE,
         ])) {
             throw new ValidationException('O tipo de transação não foi definido.');
         }
@@ -208,34 +337,6 @@ class Transacao
         }
 
         $this->accountType = $accountType;
-
-        return $this;
-    }
-
-    public function getPlanType(): string
-    {
-        return $this->planType;
-    }
-
-    public function setPlanType(string $planType): Transacao
-    {
-        if (!in_array($planType, [self::PLAN_TYPE_VISTA, self::PLAN_TYPE_PARCELADO])) {
-            throw new ValidationException('A forma de pagamento é inválida');
-        }
-
-        $this->planType = $planType;
-
-        return $this;
-    }
-
-    public function getInstallments(): int
-    {
-        return $this->installments;
-    }
-
-    public function setInstallments(int $installments): Transacao
-    {
-        $this->installments = $installments;
 
         return $this;
     }
