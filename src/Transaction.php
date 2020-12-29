@@ -136,7 +136,7 @@ class Transaction implements GlobalPaymentInterface
         $soapenvNS = 'http://schemas.xmlsoap.org/soap/envelope/';
         $webNS     = 'http://webservice.sis.sermepa.es';
 
-        $dom = new DOMDocument('1.0', 'utf-8');
+        $dom = new DOMDocument('1.0', 'UTF-8');
 
         $dom->preserveWhiteSpace = false;
         $dom->formatOutput       = true;
