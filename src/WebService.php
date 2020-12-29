@@ -49,7 +49,10 @@ class WebService
                 ],
             ]);
 
-            return $response->getBody()->getContents();
+            return $this->parseWebserviceSuccessResponse(
+                $response->getBody()->getContents()
+            );
+
         } catch (ClientException | ServerException $e) {
             $this->parseResponseError(
                 $e->getResponse()->getBody()->getContents()
@@ -75,5 +78,24 @@ class WebService
         }
 
         throw new ServiceException('An error ocurred during your request. Please try again');
+    }
+
+    protected function parseWebserviceSuccessResponse(string $message): string
+    {
+        $dom = new DOMDocument();
+        $dom->loadXML($message);
+
+        $xml = json_decode(json_encode(simplexml_load_string($dom->textContent)));
+
+        if (Str::contains('SIS', $xml->CODIGO)) {
+
+        }
+
+
+        var_dump();
+        die();
+
+        var_dump(json_decode(json_encode()));
+        die();
     }
 }
