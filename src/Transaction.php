@@ -2,7 +2,7 @@
 
 namespace CSWeb\GlobalPayments;
 
-use CSWeb\GlobalPayments\Interfaces\Serializable;
+use CSWeb\GlobalPayments\Interfaces\GlobalPaymentInterface;
 use CSWeb\GlobalPayments\Validation\ValidatesTransaction;
 use DateTime;
 use DOMDocument;
@@ -15,7 +15,7 @@ use Illuminate\Support\Str;
  * @version 1.0.0
  * @package CSWeb\GlobalPayments
  */
-class Transaction implements Serializable
+class Transaction implements GlobalPaymentInterface
 {
     const TRANSACTION_TYPE = 'A';
 
@@ -70,6 +70,11 @@ class Transaction implements Serializable
                 $this->{$method}($value);
             }
         }
+    }
+
+    public function action(): string
+    {
+        return 'trataPeticion';
     }
 
     public function getCardHolder(): string

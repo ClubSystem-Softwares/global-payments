@@ -2,7 +2,7 @@
 
 namespace CSWeb\GlobalPayments;
 
-use CSWeb\GlobalPayments\Interfaces\Serializable;
+use CSWeb\GlobalPayments\Interfaces\GlobalPaymentInterface;
 use DOMDocument;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\{ClientException, ServerException};
@@ -35,13 +35,14 @@ class WebService
         ]);
     }
 
-    public function send(Serializable $serializable): string
+    public function send(GlobalPaymentInterface $payment): string
     {
         try {
             $response = $this->client->post('/sis/services/SerClsWSEntrada', [
-                'body'    => $serializable->toXml(),
+                'body'    => $payment->toXml(),
                 'headers' => [
                     'Content-Type' => 'text/xml',
+                    'SOAPAction'   => $payment->action(),
                 ],
                 'curl'    => [
                     CURLOPT_SSL_VERIFYPEER => false,

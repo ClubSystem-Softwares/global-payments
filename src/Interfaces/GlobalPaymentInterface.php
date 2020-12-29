@@ -9,7 +9,9 @@ namespace CSWeb\GlobalPayments\Interfaces;
  * @version 1.0.0
  * @package CSWeb\GlobalPayments\Interfaces
  */
-interface Serializable
+interface GlobalPaymentInterface
 {
+    public function action(): string;
+
     public function toXml(): string;
 }
