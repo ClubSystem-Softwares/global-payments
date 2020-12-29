@@ -77,11 +77,9 @@ class TransactionTest extends TestCase
             'merchantKey'      => 'qwertyasdf0123456789',
         ];
 
+        $stubfile  = file_get_contents(__DIR__ . '/stubs/transacao.xml');
         $transacao = new Transaction($data);
 
-        file_put_contents(__DIR__ . '/stubs/transacao.xml', $transacao->toXml());
-        echo $transacao->toXml();
-        /*var_dump();*/
-        die();
+        $this->assertEquals($stubfile, $transacao->toXml());
     }
 }
