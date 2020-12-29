@@ -112,4 +112,13 @@ class ServiceException extends RuntimeException
         'SIS0493' => 'Parâmetros de transação segura recebidos em uma solicitação de pagamento não seguro. O campo DS_MERCHANT_TRANSACTIONTYPE=A não é compatível com os parâmetros DS_MERCHANT_ACCEPTHEADER e DS_MERCHANT_USERAGENT',
         'SIS0524' => 'Não é possível realizar a autenticação 3DSecure MasterCard SecureCode Externo porque não está presente o campo CAVV do emissor na mensagem de solicitação autorização',
     ];
+
+    public static function throwInternalError(string $errorCode)
+    {
+        $message = array_key_exists($errorCode, self::GLOBAL_ERRORS)
+            ? self::GLOBAL_ERRORS[$errorCode]
+            : 'An error ocurred while getting error message. Please try again';
+
+        throw new ServiceException($message);
+    }
 }

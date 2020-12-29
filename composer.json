@@ -12,8 +12,9 @@
     "minimum-stability": "stable",
     "require": {
         "php": ">=7.2",
-        "ext-dom": "*",
         "ext-curl": "*",
+        "ext-dom": "*",
+        "ext-json": "*",
         "ext-simplexml": "*",
         "guzzlehttp/guzzle": "^6.5",
         "illuminate/validation": "^5.8",

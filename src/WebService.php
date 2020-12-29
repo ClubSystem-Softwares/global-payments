@@ -87,8 +87,8 @@ class WebService
 
         $xml = json_decode(json_encode(simplexml_load_string($dom->textContent)));
 
-        if (Str::contains('SIS', $xml->CODIGO)) {
-
+        if (Str::contains($xml->CODIGO, 'SIS')) {
+            ServiceException::throwInternalError($xml->CODIGO);
         }
 
 
