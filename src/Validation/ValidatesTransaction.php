@@ -3,6 +3,7 @@
 namespace CSWeb\GlobalPayments\Validation;
 
 use CSWeb\GlobalPayments\Rules\DateRule;
+use CSWeb\GlobalPayments\Rules\NumberSize;
 use CSWeb\GlobalPayments\Validator;
 
 /**
@@ -24,20 +25,22 @@ class ValidatesTransaction extends Validator
             'cvv'              => ['required', 'min:3', 'max:4'],
             'expiryDate'       => ['required', new DateRule()],
             'installments'     => ['nullable', 'numeric', 'max:12'],
-            'merchantCode'     => ['required', 'numeric', 'digits:15'],
-            'merchantTerminal' => ['required', 'numeric', 'digits:3'],
+            'merchantCode'     => ['required', 'numeric', new NumberSize(15)],
+            'merchantTerminal' => ['required', 'numeric', new NumberSize(3)],
         ];
     }
 
     public function attributes(): array
     {
         return [
-            'amount'       => 'valor',
-            'order'        => 'código',
-            'cardHolder'   => 'titular',
-            'cardNumber'   => 'número do cartão',
-            'installments' => 'parcelas',
-            'expiryDate'   => 'data de vencimento',
+            'amount'           => 'valor',
+            'order'            => 'código',
+            'cardHolder'       => 'titular',
+            'cardNumber'       => 'número do cartão',
+            'installments'     => 'parcelas',
+            'expiryDate'       => 'data de vencimento',
+            'merchantCode'     => 'código da loja',
+            'merchantTerminal' => 'terminal',
         ];
     }
 }
