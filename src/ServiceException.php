@@ -113,6 +113,30 @@ class ServiceException extends RuntimeException
         'SIS0524' => 'Não é possível realizar a autenticação 3DSecure MasterCard SecureCode Externo porque não está presente o campo CAVV do emissor na mensagem de solicitação autorização',
     ];
 
+    const CARD_ERRORS = [
+        12  => 'Transação não autorizada',
+        101 => 'O Cartão encontra-se expirado',
+        102 => 'Existe algum tipo de restrição com o cartão. Por favor, entre em contato com o emissor',
+        104 => 'Transação não autorizada. Existe algum tipo de restrição com o cartão. Por favor, entre em contato com o emissor',
+        107 => 'Há algo de errado com o seu cartão. Por favor, entre em contato com o emissor',
+        110 => 'Valor da cobrança. Verifique e tente novamente',
+        120 => 'Transação negada pela adquirente',
+        125 => 'Cartão não habilitado. Entre em contato com o emissor',
+        129 => 'Código de seguranda (CVV2/CVC2) incorreto',
+        167 => 'Ocorreu um erro ao validar o cartão. Entre em contato com o emissor',
+        180 => 'Ocorreu um erro ao validar o cartão. Entre em contato com o emissor',
+        181 => 'Erro de transação. Cartão de crédito utilizado em uma função de débito',
+        182 => 'Erro de transação. Cartão de débito utilizado em uma função de crédito',
+        190 => 'Transação não autorizada',
+        191 => 'Data de expiração inválida',
+        208 => 'Há algo de errado com o seu cartão. Por favor, entre em contato com o emissor',
+        209 => 'Há algo de errado com o seu cartão. Por favor, entre em contato com o emissor',
+        290 => 'Há algo de errado com o seu cartão. Por favor, entre em contato com o emissor',
+        904 => 'Erro de sistema. Contate a global payments',
+        909 => 'Erro interno. Caso persista, entre em contato com a Global Payments',
+        912 => 'Transação não autorizada',
+    ];
+
     public static function throwInternalError(string $errorCode)
     {
         $message = array_key_exists($errorCode, self::GLOBAL_ERRORS)
