@@ -7,6 +7,7 @@ use CSWeb\GlobalPayments\Validation\ValidatesTransaction;
 use DateTime;
 use DOMDocument;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 
 /**
  * Class Transacao
@@ -61,8 +62,7 @@ class Transaction implements GlobalPaymentInterface
 
     public function __construct(array $data)
     {
-        $validator = new ValidatesTransaction($data);
-        $validator->validate();
+        (new ValidatesTransaction($data))->validate();
 
         foreach ($data as $property => $value) {
             if (property_exists($this, $property)) {
@@ -75,60 +75,6 @@ class Transaction implements GlobalPaymentInterface
     public function action(): string
     {
         return 'trataPeticion';
-    }
-
-    public function getCardHolder(): string
-    {
-        return $this->cardHolder;
-    }
-
-    public function setCardHolder(string $cardHolder): Transaction
-    {
-        $this->cardHolder = $cardHolder;
-
-        return $this;
-    }
-
-    public function getPlanType(): string
-    {
-        return $this->planType;
-    }
-
-    public function setPlanType(string $planType): Transaction
-    {
-        if (!in_array($planType, [self::PLAN_TYPE_VISTA, self::PLAN_TYPE_PARCELADO])) {
-            throw new ValidationException('A forma de pagamento é inválida');
-        }
-
-        $this->planType = $planType;
-
-        return $this;
-    }
-
-    public function getInstallments(): int
-    {
-        return $this->installments;
-    }
-
-    public function setInstallments(int $installments): Transaction
-    {
-        $this->installments = $installments;
-
-        return $this;
-    }
-
-    public function getSignature(): string
-    {
-        $string = $this->getAmount()
-                . $this->getOrder()
-                . $this->getMerchantCode()
-                . $this->getCurrency()
-                . $this->getCardNumber()
-                . $this->getCvv()
-                . $this->getTransactionType()
-                . $this->getMerchantKey();
-
-        return hash('sha256', $string);
     }
 
     public function toXml(): string
@@ -202,6 +148,60 @@ class Transaction implements GlobalPaymentInterface
         return $dom->saveXML($dados);
     }
 
+    public function getCardHolder(): string
+    {
+        return $this->cardHolder;
+    }
+
+    public function setCardHolder(string $cardHolder): Transaction
+    {
+        $this->cardHolder = $cardHolder;
+
+        return $this;
+    }
+
+    public function getPlanType(): string
+    {
+        return $this->planType;
+    }
+
+    public function setPlanType(string $planType): Transaction
+    {
+        if (!in_array($planType, [self::PLAN_TYPE_VISTA, self::PLAN_TYPE_PARCELADO])) {
+            throw new InvalidArgumentException('A forma de pagamento é inválida');
+        }
+
+        $this->planType = $planType;
+
+        return $this;
+    }
+
+    public function getInstallments(): int
+    {
+        return $this->installments;
+    }
+
+    public function setInstallments(int $installments): Transaction
+    {
+        $this->installments = $installments;
+
+        return $this;
+    }
+
+    public function getSignature(): string
+    {
+        $string = $this->getAmount()
+            . $this->getOrder()
+            . $this->getMerchantCode()
+            . $this->getCurrency()
+            . $this->getCardNumber()
+            . $this->getCvv()
+            . $this->getTransactionType()
+            . $this->getMerchantKey();
+
+        return hash('sha256', $string);
+    }
+
     public function getAmount(): int
     {
         return $this->amount;
@@ -226,24 +226,24 @@ class Transaction implements GlobalPaymentInterface
         return $this;
     }
 
-    public function getMerchantCode(): int
+    public function getMerchantCode(): string
     {
         return $this->merchantCode;
     }
 
-    public function setMerchantCode(int $merchantCode): Transaction
+    public function setMerchantCode(string $merchantCode): Transaction
     {
         $this->merchantCode = $merchantCode;
 
         return $this;
     }
 
-    public function getMerchantTerminal(): int
+    public function getMerchantTerminal(): string
     {
         return $this->merchantTerminal;
     }
 
-    public function setMerchantTerminal(int $merchantTerminal): Transaction
+    public function setMerchantTerminal(string $merchantTerminal): Transaction
     {
         $this->merchantTerminal = $merchantTerminal;
 
@@ -322,7 +322,7 @@ class Transaction implements GlobalPaymentInterface
             self::TRANSACTION_TYPE_3DS,
             self::TRANSACTION_TYPE_PRE,
         ])) {
-            throw new ValidationException('O tipo de transação não foi definido.');
+            throw new InvalidArgumentException('O tipo de transação não foi definido.');
         }
 
         $this->transactionType = $transactionType;
@@ -338,7 +338,7 @@ class Transaction implements GlobalPaymentInterface
     public function setAccountType(string $accountType): Transaction
     {
         if (!in_array($accountType, [self::ACCOUNT_TYPE_CREDITO, self::ACCOUNT_TYPE_DEBITO])) {
-            throw new ValidationException('O tipo de pagamento passado é inválido');
+            throw new InvalidArgumentException('O tipo de pagamento passado é inválido');
         }
 
         $this->accountType = $accountType;
