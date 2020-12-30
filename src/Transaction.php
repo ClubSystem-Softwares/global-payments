@@ -170,7 +170,7 @@ class Transaction implements GlobalPaymentInterface
         $dom = new DOMDocument();
 
         $dom->preserveWhiteSpace = false;
-        $dom->formatOutput       = true;
+        $dom->formatOutput       = false;
 
         $dados      = $dom->createElement('DATOSENTRADA');
         $amount     = $dom->createElement('DS_MERCHANT_AMOUNT', $this->getAmount());
