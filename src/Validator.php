@@ -3,6 +3,7 @@
 namespace CSWeb\GlobalPayments;
 
 use CSWeb\GlobalPayments\Factories\ValidationFactory;
+use InvalidArgumentException;
 
 /**
  * Class Validator
@@ -48,7 +49,7 @@ abstract class Validator
             $errors  = $e->errors();
             $message = array_shift($errors)[0];
 
-            throw new ValidationException($message);
+            throw new InvalidArgumentException($message);
         }
     }
 }

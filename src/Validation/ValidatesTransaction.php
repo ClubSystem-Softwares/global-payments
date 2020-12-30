@@ -2,8 +2,7 @@
 
 namespace CSWeb\GlobalPayments\Validation;
 
-use CSWeb\GlobalPayments\Rules\DateRule;
-use CSWeb\GlobalPayments\Rules\NumberSize;
+use CSWeb\GlobalPayments\Rules\{DateRule, NumberSize};
 use CSWeb\GlobalPayments\Validator;
 
 /**
@@ -27,6 +26,7 @@ class ValidatesTransaction extends Validator
             'installments'     => ['nullable', 'numeric', 'max:12'],
             'merchantCode'     => ['required', 'numeric', new NumberSize(15)],
             'merchantTerminal' => ['required', 'numeric', new NumberSize(3)],
+            'merchantKey'      => ['required'],
         ];
     }
 
@@ -41,6 +41,7 @@ class ValidatesTransaction extends Validator
             'expiryDate'       => 'data de vencimento',
             'merchantCode'     => 'código da loja',
             'merchantTerminal' => 'terminal',
+            'merchantKey'      => 'chave de acesso',
         ];
     }
 }
