@@ -2,7 +2,7 @@
 
 namespace CSWeb\Tests;
 
-use CSWeb\GlobalPayments\{Invoice, Transaction, WebService};
+use CSWeb\GlobalPayments\{Invoice, ServiceException, Transaction, WebService};
 use DateTime;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\TestCase;
@@ -51,5 +51,32 @@ class WebServiceTest extends TestCase
         $this->assertEquals($data['amount'] * 100, $invoice->amount);
         $this->assertEquals($data['order'], $invoice->order);
         $this->assertEquals($data['merchantCode'], $invoice->merchantCode);
+    }
+
+    public function testDeniedTransaction()
+    {
+        if (!getenv('MERCHANT_CODE') || !getenv('MERCHANT_TERMINAL')) {
+            $this->assertTrue(true);
+            return;
+        }
+
+        $this->expectExceptionMessage('Transação não autorizada [Error 190]');
+        $this->expectException(ServiceException::class);
+
+        $data = [
+            'amount'           => 10.00,
+            'order'            => rand(1000, 9999) . Str::random(8),
+            'cardHolder'       => 'Matheus Lopes Santos',
+            'cardNumber'       => '4024 0071 5039 4517',
+            'cvv'              => 123,
+            'expiryDate'       => new DateTime(),
+            'merchantCode'     => getenv('MERCHANT_CODE'),
+            'merchantTerminal' => getenv('MERCHANT_TERMINAL'),
+            'merchantKey'      => 'qwertyasdf0123456789',
+        ];
+
+        $transaction = new Transaction($data);
+
+        (new WebService(true))->send($transaction);
     }
 }
