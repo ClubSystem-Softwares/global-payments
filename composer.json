@@ -10,5 +10,27 @@
         }
     ],
     "minimum-stability": "stable",
-    "require": {}
+    "require": {
+        "php": ">=7.2",
+        "ext-curl": "*",
+        "ext-dom": "*",
+        "ext-json": "*",
+        "ext-simplexml": "*",
+        "guzzlehttp/guzzle": "^6.5",
+        "illuminate/validation": "^5.8",
+        "psr/log": "^1.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "CSWeb\\GlobalPayments\\": "./src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "CSWeb\\Tests\\": "./tests"
+        }
+    }
 }
