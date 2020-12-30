@@ -143,6 +143,15 @@ class ServiceException extends RuntimeException
             ? self::GLOBAL_ERRORS[$errorCode]
             : 'An error ocurred while getting error message. Please try again';
 
-        throw new ServiceException($message);
+        throw new ServiceException($message . ' [Error '.$errorCode.']');
+    }
+
+    public static function throwPaymentError(int $errorCode)
+    {
+        $message = array_key_exists($errorCode, self::CARD_ERRORS)
+            ? self::CARD_ERRORS[$errorCode]
+            : 'Transação não autorizada';
+
+        throw new ServiceException($message . ' [Error '.$errorCode.']');
     }
 }
