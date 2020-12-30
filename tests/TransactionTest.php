@@ -3,8 +3,8 @@
 namespace CSWeb\Tests;
 
 use CSWeb\GlobalPayments\Transaction;
-use CSWeb\GlobalPayments\ValidationException;
 use DateTime;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -18,7 +18,7 @@ class TransactionTest extends TestCase
 {
     public function testBasicValidation()
     {
-        $this->expectException(ValidationException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('O campo parcelas não pode conter um valor superior a 12');
 
         $data = [
@@ -43,8 +43,9 @@ class TransactionTest extends TestCase
             'cardNumber'       => '4111 1111 1111 1111',
             'cvv'              => 123,
             'expiryDate'       => new DateTime(),
-            'merchantCode'     => 1234567,
-            'merchantTerminal' => 12301233,
+            'merchantCode'     => rand(100000000000000, 999999999999999),
+            'merchantTerminal' => '001',
+            'merchantKey'      => 'qwertyasdf0123456789'
         ];
 
         $transacao = new Transaction($data);
@@ -72,8 +73,8 @@ class TransactionTest extends TestCase
             'cardNumber'       => '4111 1111 1111 1111',
             'cvv'              => 123,
             'expiryDate'       => new DateTime(),
-            'merchantCode'     => 1234567,
-            'merchantTerminal' => 12301233,
+            'merchantCode'     => 156556887201322,
+            'merchantTerminal' => '001',
             'merchantKey'      => 'qwertyasdf0123456789',
         ];
 

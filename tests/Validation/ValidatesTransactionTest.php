@@ -3,9 +3,9 @@
 namespace CSWeb\Tests\Validation;
 
 use CSWeb\GlobalPayments\Validation\ValidatesTransaction;
-use CSWeb\GlobalPayments\ValidationException;
 use DateTime;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -19,7 +19,7 @@ class ValidatesTransactionTest extends TestCase
 {
     public function testTransactionValidation()
     {
-        $this->expectException(ValidationException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('O campo valor é obrigatório');
 
         $data = [
@@ -35,7 +35,7 @@ class ValidatesTransactionTest extends TestCase
 
     public function testOrderValidation()
     {
-        $this->expectException(ValidationException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('O campo código é obrigatório');
 
         $data = [
@@ -51,7 +51,7 @@ class ValidatesTransactionTest extends TestCase
 
     public function testOrderAlfaNumValidation()
     {
-        $this->expectException(ValidationException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('O campo código deve conter apenas letras e números');
 
         $data = [
@@ -68,7 +68,7 @@ class ValidatesTransactionTest extends TestCase
 
     public function testOrderSize()
     {
-        $this->expectException(ValidationException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('O campo código não pode conter mais de 12 caracteres.');
 
         $data = [
@@ -85,7 +85,7 @@ class ValidatesTransactionTest extends TestCase
 
     public function testCardHolderName()
     {
-        $this->expectException(ValidationException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('O campo titular é obrigatório');
 
         $data = [
@@ -101,7 +101,7 @@ class ValidatesTransactionTest extends TestCase
 
     public function testCardHoldNameLength()
     {
-        $this->expectException(ValidationException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('O campo titular não pode conter mais de 60 caracteres.');
 
         $data = [
@@ -118,7 +118,7 @@ class ValidatesTransactionTest extends TestCase
 
     public function testCardNumber()
     {
-        $this->expectException(ValidationException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('O campo número do cartão é obrigatório');
 
         $data = [
@@ -134,7 +134,7 @@ class ValidatesTransactionTest extends TestCase
 
     public function testCreditCardValidation()
     {
-        $this->expectException(ValidationException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('O campo número do cartão não pode conter mais de 19 caracteres');
 
         $data = [
@@ -151,7 +151,7 @@ class ValidatesTransactionTest extends TestCase
 
     public function testCvv()
     {
-        $this->expectException(ValidationException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('O campo cvv é obrigatório');
 
         $data = [
@@ -167,7 +167,7 @@ class ValidatesTransactionTest extends TestCase
 
     public function testCvvLength()
     {
-        $this->expectException(ValidationException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('O campo cvv não pode conter mais de 4 caracteres.');
 
         $data = [
@@ -184,7 +184,7 @@ class ValidatesTransactionTest extends TestCase
 
     public function testExpiryDate()
     {
-        $this->expectException(ValidationException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('O campo data de vencimento é obrigatório');
 
         $data = [
@@ -201,7 +201,7 @@ class ValidatesTransactionTest extends TestCase
 
     public function testExpiryDateFormat()
     {
-        $this->expectException(ValidationException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('A data de vencimento deve ser um objeto Datetime');
 
         $data = [
@@ -219,7 +219,7 @@ class ValidatesTransactionTest extends TestCase
 
     public function testInstallments()
     {
-        $this->expectException(ValidationException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('O campo parcelas deve conter um valor numérico.');
 
         $data = [
@@ -238,7 +238,7 @@ class ValidatesTransactionTest extends TestCase
 
     public function testMaxInstallments()
     {
-        $this->expectException(ValidationException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('O campo parcelas não pode conter um valor superior a 12');
 
         $data = [
