@@ -91,8 +91,13 @@ class WebService
             ServiceException::throwInternalError($xml->CODIGO);
         }
 
-        if ($xml->CODIGO == 0) {
-            return new Invoice($xml->OPERACION);
+        $invoice  = new Invoice($xml->OPERACION);
+        $response = (int)$invoice->response;
+
+        if (!in_array($response, [0, 900, 400])) {
+            ServiceException::throwPaymentError($response);
         }
+
+        return $invoice;
     }
 }
