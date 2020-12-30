@@ -1,5 +1,7 @@
 # CSWEB GlobalPayments
 
+[![Build Status](https://travis-ci.org/ClubSystem-Softwares/global-payments.svg?branch=master)](https://travis-ci.org/ClubSystem-Softwares/global-payments)
+
 Este package foi desenvolvido para uso do webservice
 disponibilizado pela empresa GlobalPayments
 
