@@ -17,13 +17,15 @@ class ValidatesTransaction extends Validator
     public function rules(): array
     {
         return [
-            'amount'       => ['required', 'numeric'],
-            'order'        => ['required', 'alpha_num', 'max:12'],
-            'cardHolder'   => ['required', 'max:60'],
-            'cardNumber'   => ['required', 'max:19'],
-            'cvv'          => ['required', 'min:3', 'max:4'],
-            'expiryDate'   => ['required', new DateRule()],
-            'installments' => ['nullable', 'numeric', 'max:12'],
+            'amount'           => ['required', 'numeric'],
+            'order'            => ['required', 'alpha_num', 'max:12'],
+            'cardHolder'       => ['required', 'max:60'],
+            'cardNumber'       => ['required', 'max:19'],
+            'cvv'              => ['required', 'min:3', 'max:4'],
+            'expiryDate'       => ['required', new DateRule()],
+            'installments'     => ['nullable', 'numeric', 'max:12'],
+            'merchantCode'     => ['required', 'numeric', 'digits:15'],
+            'merchantTerminal' => ['required', 'numeric', 'digits:3'],
         ];
     }
 
