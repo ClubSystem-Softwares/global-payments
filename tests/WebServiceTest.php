@@ -2,8 +2,7 @@
 
 namespace CSWeb\Tests;
 
-use CSWeb\GlobalPayments\Transaction;
-use CSWeb\GlobalPayments\WebService;
+use CSWeb\GlobalPayments\{Invoice, Transaction, WebService};
 use DateTime;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\TestCase;
@@ -35,7 +34,7 @@ class WebServiceTest extends TestCase
             'amount'           => 10.00,
             'order'            => rand(1000, 9999) . Str::random(8),
             'cardHolder'       => 'Matheus Lopes Santos',
-            'cardNumber'       => '4111 1111 1111 1111',
+            'cardNumber'       => '4548812049400004',
             'cvv'              => 123,
             'expiryDate'       => new DateTime(),
             'merchantCode'     => getenv('MERCHANT_CODE'),
@@ -46,8 +45,11 @@ class WebServiceTest extends TestCase
         $transaction    = new Transaction($data);
         $globalPayments = new WebService(true);
 
-        $response = $globalPayments->send($transaction);
+        $invoice = $globalPayments->send($transaction);
 
-        echo $response;
+        $this->assertInstanceOf(Invoice::class, $invoice);
+        $this->assertEquals($data['amount'] * 100, $invoice->amount);
+        $this->assertEquals($data['order'], $invoice->order);
+        $this->assertEquals($data['merchantCode'], $invoice->merchantCode);
     }
 }

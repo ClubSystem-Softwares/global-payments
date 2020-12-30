@@ -35,7 +35,7 @@ class WebService
         ]);
     }
 
-    public function send(GlobalPaymentInterface $payment): string
+    public function send(GlobalPaymentInterface $payment): Invoice
     {
         try {
             $response = $this->client->post('/sis/services/SerClsWSEntrada', [
@@ -80,7 +80,7 @@ class WebService
         throw new ServiceException('An error ocurred during your request. Please try again');
     }
 
-    protected function parseWebserviceSuccessResponse(string $message): string
+    protected function parseWebserviceSuccessResponse(string $message): Invoice
     {
         $dom = new DOMDocument();
         $dom->loadXML($message);
@@ -89,6 +89,10 @@ class WebService
 
         if (Str::contains($xml->CODIGO, 'SIS')) {
             ServiceException::throwInternalError($xml->CODIGO);
+        }
+
+        if ($xml->CODIGO == 0) {
+            return new Invoice($xml->OPERACION);
         }
     }
 }
