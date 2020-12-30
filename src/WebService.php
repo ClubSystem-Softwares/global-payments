@@ -41,7 +41,7 @@ class WebService
             $response = $this->client->post('/sis/services/SerClsWSEntrada', [
                 'body'    => $payment->toXml(),
                 'headers' => [
-                    'Content-Type' => 'text/xml',
+                    'Content-Type' => 'application/xml',
                     'SOAPAction'   => $payment->action(),
                 ],
                 'curl'    => [
@@ -90,12 +90,5 @@ class WebService
         if (Str::contains($xml->CODIGO, 'SIS')) {
             ServiceException::throwInternalError($xml->CODIGO);
         }
-
-
-        var_dump();
-        die();
-
-        var_dump(json_decode(json_encode()));
-        die();
     }
 }
