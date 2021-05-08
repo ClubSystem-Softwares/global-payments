@@ -21,6 +21,8 @@ class Cancelation implements Interfaces\GlobalPaymentInterface
 
     protected $merchantCode;
 
+    protected $merchantKey;
+
     public function action(): string
     {
         return 'trataPeticion';
@@ -65,5 +67,29 @@ class Cancelation implements Interfaces\GlobalPaymentInterface
         $this->merchantCode = $merchantCode;
 
         return $this;
+    }
+
+    public function getMerchantKey(): string
+    {
+        return $this->merchantKey;
+    }
+
+    public function setMerchantKey(string $key): Cancelation
+    {
+        $this->merchantKey = $key;
+
+        return $this;
+    }
+
+    public function getSignature(): string
+    {
+        $string = $this->getAmount()
+            . $this->getOrder()
+            . $this->getMerchantCode()
+            . self::CURRENCY
+            . self::TRANSACTION_TYPE
+            . $this->getMerchantKey();
+
+        return hash('sha256', $string);
     }
 }
