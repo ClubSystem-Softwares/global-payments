@@ -3,13 +3,13 @@
 namespace CSWeb\GlobalPayments;
 
 /**
- * Class Cancelation
+ * Cancellation
  *
  * @author  Matheus Lopes Santos <fale_com_lopez@hotmail.com>
  * @version 1.0.0
  * @package CSWeb\GlobalPayments
  */
-class Cancelation implements Interfaces\GlobalPaymentInterface
+class Cancellation implements Interfaces\GlobalPaymentInterface
 {
     public const CURRENCY = 986;
 
@@ -38,7 +38,7 @@ class Cancelation implements Interfaces\GlobalPaymentInterface
         return $this->amount;
     }
 
-    public function setAmount(float $amount): Cancelation
+    public function setAmount(float $amount): Cancellation
     {
         $this->amount = ($amount * 100);
 
@@ -50,7 +50,7 @@ class Cancelation implements Interfaces\GlobalPaymentInterface
         return $this->order;
     }
 
-    public function setOrder(string $order): Cancelation
+    public function setOrder(string $order): Cancellation
     {
         $this->order = $order;
 
@@ -62,7 +62,7 @@ class Cancelation implements Interfaces\GlobalPaymentInterface
         return $this->merchantCode;
     }
 
-    public function setMerchantCode(string $merchantCode): Cancelation
+    public function setMerchantCode(string $merchantCode): Cancellation
     {
         $this->merchantCode = $merchantCode;
 
@@ -74,7 +74,7 @@ class Cancelation implements Interfaces\GlobalPaymentInterface
         return $this->merchantKey;
     }
 
-    public function setMerchantKey(string $key): Cancelation
+    public function setMerchantKey(string $key): Cancellation
     {
         $this->merchantKey = $key;
 
