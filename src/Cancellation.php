@@ -2,6 +2,8 @@
 
 namespace CSWeb\GlobalPayments;
 
+use DOMDocument;
+
 /**
  * Cancellation
  *
@@ -22,6 +24,8 @@ class Cancellation implements Interfaces\GlobalPaymentInterface
     protected $merchantCode;
 
     protected $merchantKey;
+
+    protected $merchantTerminal;
 
     public function action(): string
     {
@@ -81,6 +85,18 @@ class Cancellation implements Interfaces\GlobalPaymentInterface
         return $this;
     }
 
+    public function getMerchantTerminal(): string
+    {
+        return $this->merchantTerminal;
+    }
+
+    public function setMerchantTerminal(string $merchantTerminal): Cancellation
+    {
+        $this->merchantTerminal = $merchantTerminal;
+
+        return $this;
+    }
+
     public function getSignature(): string
     {
         $string = $this->getAmount()
@@ -91,5 +107,34 @@ class Cancellation implements Interfaces\GlobalPaymentInterface
             . $this->getMerchantKey();
 
         return hash('sha256', $string);
+    }
+
+    public function getCancellationData()
+    {
+        $dom = new DOMDocument();
+
+        $dom->preserveWhiteSpace = false;
+        $dom->formatOutput       = false;
+
+        $dados     = $dom->createElement('DADOSENTRADA');
+        $amount    = $dom->createElement('DS_MERCHANT_AMOUNT', $this->getAmount());
+        $order     = $dom->createElement('DS_MERCHANT_ORDER', $this->getOrder());
+        $merchant  = $dom->createElement('DS_MERCHANT_MERCHANTCODE', $this->getMerchantCode());
+        $currency  = $dom->createElement('DS_MERCHANT_CURRENCY', self::CURRENCY);
+        $type      = $dom->createElement('DS_MERCHANT_TRANSACTIONTYPE', self::TRANSACTION_TYPE);
+        $terminal  = $dom->createElement('DS_MERCHANT_TERMINAL', $this->getMerchantTerminal());
+        $signature = $dom->createElement('DS_MERCHANT_MERCHANTSIGNATURE', $this->getSignature());
+
+        $dados->appendChild($amount);
+        $dados->appendChild($order);
+        $dados->appendChild($merchant);
+        $dados->appendChild($currency);
+        $dados->appendChild($type);
+        $dados->appendChild($terminal);
+        $dados->appendChild($signature);
+
+        $dom->appendChild($dados);
+
+        return $dom->saveXML($dados);
     }
 }
