@@ -11,7 +11,7 @@ use DOMDocument;
  * @version 1.0.0
  * @package CSWeb\GlobalPayments
  */
-class Cancellation implements Interfaces\GlobalPaymentInterface
+class Cancellation extends AbstractTransaction
 {
     public const CURRENCY = 986;
 
@@ -26,16 +26,6 @@ class Cancellation implements Interfaces\GlobalPaymentInterface
     protected $merchantKey;
 
     protected $merchantTerminal;
-
-    public function action(): string
-    {
-        return 'trataPeticion';
-    }
-
-    public function toXml(): string
-    {
-        // TODO: Implement toXml() method.
-    }
 
     public function getAmount(): int
     {
@@ -109,7 +99,7 @@ class Cancellation implements Interfaces\GlobalPaymentInterface
         return hash('sha256', $string);
     }
 
-    public function getCancellationData()
+    public function getComponentData(): string
     {
         $dom = new DOMDocument();
 
