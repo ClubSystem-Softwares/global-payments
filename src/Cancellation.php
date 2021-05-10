@@ -2,7 +2,9 @@
 
 namespace CSWeb\GlobalPayments;
 
+use CSWeb\GlobalPayments\Validation\ValidatesCancellation;
 use DOMDocument;
+use Illuminate\Support\Str;
 
 /**
  * Cancellation
@@ -26,6 +28,18 @@ class Cancellation extends AbstractTransaction
     protected $merchantKey;
 
     protected $merchantTerminal;
+
+    public function __construct(array $data)
+    {
+        (new ValidatesCancellation($data))->validate();
+
+        foreach ($data as $property => $value) {
+            if (property_exists($this, $property)) {
+                $method = 'set' . Str::title($property);
+                $this->{$method}($value);
+            }
+        }
+    }
 
     public function getAmount(): int
     {
