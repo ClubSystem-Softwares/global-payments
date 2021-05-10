@@ -4,6 +4,13 @@ namespace CSWeb\GlobalPayments;
 
 use DOMDocument;
 
+/**
+ * Class AbstractTransaction
+ *
+ * @author  Matheus Lopes Santos <fale_com_lopez@hotmail.com>
+ * @version 1.0.0
+ * @package CSWeb\GlobalPayments
+ */
 abstract class AbstractTransaction implements Interfaces\GlobalPaymentInterface
 {
     public function action(): string

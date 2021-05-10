@@ -13,7 +13,7 @@ use RuntimeException;
  */
 class ServiceException extends RuntimeException
 {
-    const GLOBAL_ERRORS = [
+    public const GLOBAL_ERRORS = [
         'SIS0001' => 'Erro genérico',
         'SIS0002' => 'Erro genérico',
         'SIS0007' => 'Erro ao desmontar o XML de entrada',
@@ -113,7 +113,7 @@ class ServiceException extends RuntimeException
         'SIS0524' => 'Não é possível realizar a autenticação 3DSecure MasterCard SecureCode Externo porque não está presente o campo CAVV do emissor na mensagem de solicitação autorização',
     ];
 
-    const CARD_ERRORS = [
+    public const CARD_ERRORS = [
         12  => 'Transação não autorizada',
         101 => 'O Cartão encontra-se expirado',
         102 => 'Existe algum tipo de restrição com o cartão. Por favor, entre em contato com o emissor',
@@ -143,7 +143,7 @@ class ServiceException extends RuntimeException
             ? self::GLOBAL_ERRORS[$errorCode]
             : 'An error ocurred while getting error message. Please try again';
 
-        throw new ServiceException($message . ' [Error '.$errorCode.']');
+        throw new ServiceException($message . ' [Error ' . $errorCode . ']');
     }
 
     public static function throwPaymentError(int $errorCode)
@@ -152,6 +152,6 @@ class ServiceException extends RuntimeException
             ? self::CARD_ERRORS[$errorCode]
             : 'Transação não autorizada';
 
-        throw new ServiceException($message . ' [Error '.$errorCode.']');
+        throw new ServiceException($message . ' [Error ' . $errorCode . ']');
     }
 }

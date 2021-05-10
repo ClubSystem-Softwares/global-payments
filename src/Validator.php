@@ -21,7 +21,7 @@ abstract class Validator
         $this->data = $data;
     }
 
-    public abstract function rules(): array;
+    abstract public function rules(): array;
 
     public function messages(): array
     {

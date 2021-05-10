@@ -2,7 +2,6 @@
 
 namespace CSWeb\GlobalPayments;
 
-use CSWeb\GlobalPayments\Interfaces\GlobalPaymentInterface;
 use CSWeb\GlobalPayments\Validation\ValidatesTransaction;
 use DateTime;
 use DOMDocument;
@@ -16,21 +15,21 @@ use InvalidArgumentException;
  * @version 1.0.0
  * @package CSWeb\GlobalPayments
  */
-class Transaction implements GlobalPaymentInterface
+class Transaction extends AbstractTransaction
 {
-    const TRANSACTION_TYPE = 'A';
+    public const TRANSACTION_TYPE = 'A';
 
-    const TRANSACTION_TYPE_3DS = 0;
+    public const TRANSACTION_TYPE_3DS = 0;
 
-    const TRANSACTION_TYPE_PRE = 1;
+    public const TRANSACTION_TYPE_PRE = 1;
 
-    const ACCOUNT_TYPE_CREDITO = '01';
+    public const ACCOUNT_TYPE_CREDITO = '01';
 
-    const ACCOUNT_TYPE_DEBITO = '02';
+    public const ACCOUNT_TYPE_DEBITO = '02';
 
-    const PLAN_TYPE_VISTA = '01';
+    public const PLAN_TYPE_VISTA = '01';
 
-    const PLAN_TYPE_PARCELADO = '02';
+    public const PLAN_TYPE_PARCELADO = '02';
 
     protected $amount;
 
@@ -72,46 +71,7 @@ class Transaction implements GlobalPaymentInterface
         }
     }
 
-    public function action(): string
-    {
-        return 'trataPeticion';
-    }
-
-    public function toXml(): string
-    {
-        $soapenvNS = 'http://schemas.xmlsoap.org/soap/envelope/';
-        $webNS     = 'http://webservice.sis.sermepa.es';
-
-        $dom = new DOMDocument('1.0', 'UTF-8');
-
-        $dom->preserveWhiteSpace = false;
-        $dom->formatOutput       = true;
-
-        $envelope = $dom->createElementNS($soapenvNS, 'soapenv:Envelope');
-        $envelope->setAttribute('xmlns:web', $webNS);
-
-        $header = $dom->createElement('soapenv:Header');
-        $envelope->appendChild($header);
-
-        $body         = $dom->createElement('soapenv:Body');
-        $web          = $dom->createElement('web:trataPeticion');
-        $dadosEntrada = $dom->createElement('web:datoEntrada');
-
-        $cdata = $dom->createCDATASection(
-            $this->getTransactionData()
-        );
-
-        $dadosEntrada->appendChild($cdata);
-        $web->appendChild($dadosEntrada);
-        $body->appendChild($web);
-        $envelope->appendChild($body);
-
-        $dom->appendChild($envelope);
-
-        return $dom->saveXML();
-    }
-
-    private function getTransactionData()
+    public function getComponentData(): string
     {
         $dom = new DOMDocument();
 

@@ -44,7 +44,7 @@ class WebService
                     'Content-Type' => 'application/xml',
                     'SOAPAction'   => $payment->action(),
                 ],
-                'curl'    => [
+                'curl' => [
                     CURLOPT_SSL_VERIFYPEER => false,
                 ],
             ]);
@@ -52,7 +52,6 @@ class WebService
             return $this->parseWebserviceSuccessResponse(
                 $response->getBody()->getContents()
             );
-
         } catch (ClientException | ServerException $e) {
             $this->parseResponseError(
                 $e->getResponse()->getBody()->getContents()
