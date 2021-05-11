@@ -31,7 +31,7 @@ class TransactionTest extends TestCase
             'installments' => 15,
         ];
 
-        $transacao = new Transaction($data);
+        new Transaction($data);
     }
 
     public function testGettersAndSetters()
