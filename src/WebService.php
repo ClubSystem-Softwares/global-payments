@@ -18,9 +18,9 @@ use Psr\Log\LoggerInterface;
  */
 class WebService
 {
-    protected $client;
+    protected Client $client;
 
-    protected $logger;
+    protected ?LoggerInterface $logger;
 
     public function __construct(bool $sandbox = false, LoggerInterface $logger = null)
     {
