@@ -3,6 +3,7 @@
 namespace CSWeb\GlobalPayments;
 
 use CSWeb\GlobalPayments\Factories\ValidationFactory;
+use Illuminate\Support\Arr;
 use InvalidArgumentException;
 
 /**
@@ -14,7 +15,7 @@ use InvalidArgumentException;
  */
 abstract class Validator
 {
-    protected $data;
+    protected array $data;
 
     public function __construct(array $data)
     {
@@ -47,7 +48,7 @@ abstract class Validator
             return true;
         } catch (\Illuminate\Validation\ValidationException $e) {
             $errors  = $e->errors();
-            $message = array_shift($errors)[0];
+            $message = Arr::first($errors);
 
             throw new InvalidArgumentException($message);
         }
