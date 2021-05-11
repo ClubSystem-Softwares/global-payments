@@ -72,7 +72,7 @@ class TransactionTest extends TestCase
             'cardHolder'       => 'Matheus Lopes Santos',
             'cardNumber'       => '4111 1111 1111 1111',
             'cvv'              => 123,
-            'expiryDate'       => new DateTime(),
+            'expiryDate'       => (new DateTime())->setDate(2020, 12, 1),
             'merchantCode'     => 156556887201322,
             'merchantTerminal' => '001',
             'merchantKey'      => 'qwertyasdf0123456789',
