@@ -1,0 +1,19 @@
+{
+    "amount": "1000",
+    "currency": "986",
+    "order": "7809sIiRUFSU",
+    "signature": "33A28B127A6BEECF132564B8E8449C0D08E3E002BB9F4226E16E404AF592D1A6",
+    "merchantCode": "012005733649001",
+    "terminal": "1",
+    "response": "0000",
+    "authorisationCode": "363863",
+    "transactionType": "A",
+    "securePayment": "0",
+    "language": "9",
+    "cardType": "C",
+    "merchantData": [],
+    "cardCountry": "724",
+    "nsu": "363863",
+    "cardBrand": "1",
+    "processedPayMethod": "3"
+}
