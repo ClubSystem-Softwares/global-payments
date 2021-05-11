@@ -50,7 +50,7 @@ abstract class Validator
             $errors  = $e->errors();
             $message = Arr::first($errors);
 
-            throw new InvalidArgumentException($message);
+            throw new InvalidArgumentException($message[0]);
         }
     }
 }
