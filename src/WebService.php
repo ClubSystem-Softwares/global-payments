@@ -35,7 +35,7 @@ class WebService
         ]);
     }
 
-    protected function send(GlobalPaymentInterface $payment): string
+    protected function send(GlobalPaymentInterface $payment): array
     {
         try {
             $response = $this->client->post('/sis/services/SerClsWSEntrada', [
@@ -49,7 +49,7 @@ class WebService
                 ],
             ]);
 
-            return $response->getBody()->getContents();
+            return $this->parseWebserviceSuccessResponse($response->getBody()->getContents());
         } catch (ClientException | ServerException $e) {
             $this->parseResponseError(
                 $e->getResponse()->getBody()->getContents()
@@ -110,22 +110,15 @@ class WebService
 
     public function transaction(GlobalPaymentInterface $transaction): Invoice
     {
-        $content  = $this->send($transaction);
-        $response = $this->parseWebserviceSuccessResponse($content);
+        $response = $this->send($transaction);
 
         return new Invoice($response);
     }
 
-    public function cancelTransaction(GlobalPaymentInterface $transaction)
+    public function cancelTransaction(GlobalPaymentInterface $transaction): TransactionRevoked
     {
-        $content = $this->send($transaction);
+        $response = $this->send($transaction);
 
-        $dom = new DOMDocument();
-        $dom->loadXML($content);
-
-
-        file_put_contents(__DIR__ . '/../tests/stubs/cancelamento.json', json_encode(simplexml_load_string($dom->textContent), JSON_PRETTY_PRINT));
-
-        return $content;
+        return new TransactionRevoked($response);
     }
 }

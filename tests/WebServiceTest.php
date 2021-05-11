@@ -2,7 +2,7 @@
 
 namespace CSWeb\Tests;
 
-use CSWeb\GlobalPayments\{Cancellation, Invoice, ServiceException, Transaction, WebService};
+use CSWeb\GlobalPayments\{Cancellation, Invoice, ServiceException, Transaction, TransactionRevoked, WebService};
 use DateTime;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\TestCase;
@@ -114,7 +114,9 @@ class WebServiceTest extends TestCase
 
         $response = $globalPayments->cancelTransaction($cancellation);
 
-        var_dump($response);
-        die();
+        $this->assertInstanceOf(TransactionRevoked::class, $response);
+        $this->assertEquals($data['amount'] * 100, $response->amount);
+        $this->assertEquals('0900', $response->response);
+        $this->assertEquals(3, $response->transactionType);
     }
 }
