@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:web="http://webservice.sis.sermepa.es">
+  <soapenv:Header/>
+  <soapenv:Body>
+    <web:trataPeticion>
+      <web:datoEntrada><![CDATA[<DADOSENTRADA><DS_MERCHANT_AMOUNT>1000</DS_MERCHANT_AMOUNT><DS_MERCHANT_ORDER>ABC123456123</DS_MERCHANT_ORDER><DS_MERCHANT_MERCHANTCODE>292931924100909</DS_MERCHANT_MERCHANTCODE><DS_MERCHANT_CURRENCY>986</DS_MERCHANT_CURRENCY><DS_MERCHANT_TRANSACTIONTYPE>3</DS_MERCHANT_TRANSACTIONTYPE><DS_MERCHANT_TERMINAL>001</DS_MERCHANT_TERMINAL><DS_MERCHANT_MERCHANTSIGNATURE>26834266438ed3a9034e149c067ceff04191434c179e4a24bcaf8f46f4ebd33f</DS_MERCHANT_MERCHANTSIGNATURE></DADOSENTRADA>]]></web:datoEntrada>
+    </web:trataPeticion>
+  </soapenv:Body>
+</soapenv:Envelope>

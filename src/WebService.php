@@ -18,9 +18,9 @@ use Psr\Log\LoggerInterface;
  */
 class WebService
 {
-    protected $client;
+    protected Client $client;
 
-    protected $logger;
+    protected ?LoggerInterface $logger;
 
     public function __construct(bool $sandbox = false, LoggerInterface $logger = null)
     {
@@ -35,7 +35,7 @@ class WebService
         ]);
     }
 
-    public function send(GlobalPaymentInterface $payment): Invoice
+    protected function send(GlobalPaymentInterface $payment): array
     {
         try {
             $response = $this->client->post('/sis/services/SerClsWSEntrada', [
@@ -44,15 +44,12 @@ class WebService
                     'Content-Type' => 'application/xml',
                     'SOAPAction'   => $payment->action(),
                 ],
-                'curl'    => [
+                'curl' => [
                     CURLOPT_SSL_VERIFYPEER => false,
                 ],
             ]);
 
-            return $this->parseWebserviceSuccessResponse(
-                $response->getBody()->getContents()
-            );
-
+            return $this->parseWebserviceSuccessResponse($response->getBody()->getContents());
         } catch (ClientException | ServerException $e) {
             $this->parseResponseError(
                 $e->getResponse()->getBody()->getContents()
@@ -80,7 +77,7 @@ class WebService
         throw new ServiceException('An error ocurred during your request. Please try again');
     }
 
-    protected function parseWebserviceSuccessResponse(string $message): Invoice
+    protected function parseWebserviceSuccessResponse(string $message): array
     {
         $dom = new DOMDocument();
         $dom->loadXML($message);
@@ -91,13 +88,37 @@ class WebService
             ServiceException::throwInternalError($xml->CODIGO);
         }
 
-        $invoice  = new Invoice($xml->OPERACION);
-        $response = (int)$invoice->response;
+        $operation    = $xml->OPERACION;
+        $responseCode = (int)$operation->Ds_Response;
 
-        if (!in_array($response, [0, 900, 400])) {
-            ServiceException::throwPaymentError($response);
+        if (!in_array($responseCode, [0, 900, 400])) {
+            ServiceException::throwPaymentError($responseCode);
         }
 
-        return $invoice;
+        $operation = json_decode(json_encode($operation), true);
+        $data      = [];
+
+        foreach ($operation as $property => $value) {
+            $property = str_replace(['Ds_', '_'], '', $property);
+            $property = Str::camel($property);
+
+            $data[$property] = $value;
+        }
+
+        return $data;
+    }
+
+    public function transaction(GlobalPaymentInterface $transaction): Invoice
+    {
+        $response = $this->send($transaction);
+
+        return new Invoice($response);
+    }
+
+    public function cancelTransaction(GlobalPaymentInterface $transaction): TransactionRevoked
+    {
+        $response = $this->send($transaction);
+
+        return new TransactionRevoked($response);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace CSWeb\Tests;
 
-use CSWeb\GlobalPayments\{Invoice, ServiceException, Transaction, WebService};
+use CSWeb\GlobalPayments\{Cancellation, Invoice, ServiceException, Transaction, TransactionRevoked, WebService};
 use DateTime;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\TestCase;
@@ -45,7 +45,7 @@ class WebServiceTest extends TestCase
         $transaction    = new Transaction($data);
         $globalPayments = new WebService(true);
 
-        $invoice = $globalPayments->send($transaction);
+        $invoice = $globalPayments->transaction($transaction);
 
         $this->assertInstanceOf(Invoice::class, $invoice);
         $this->assertEquals($data['amount'] * 100, $invoice->amount);
@@ -77,6 +77,46 @@ class WebServiceTest extends TestCase
 
         $transaction = new Transaction($data);
 
-        (new WebService(true))->send($transaction);
+        (new WebService(true))->transaction($transaction);
+    }
+
+    public function testCancelamento()
+    {
+        if (!getenv('MERCHANT_CODE') || !getenv('MERCHANT_TERMINAL')) {
+            $this->assertTrue(true);
+            return;
+        }
+
+        $data = [
+            'amount'           => 10.00,
+            'order'            => rand(1000, 9999) . Str::random(8),
+            'cardHolder'       => 'Matheus Lopes Santos',
+            'cardNumber'       => '4548812049400004',
+            'cvv'              => 123,
+            'expiryDate'       => new DateTime(),
+            'merchantCode'     => getenv('MERCHANT_CODE'),
+            'merchantTerminal' => getenv('MERCHANT_TERMINAL'),
+            'merchantKey'      => 'qwertyasdf0123456789',
+        ];
+
+        $transaction    = new Transaction($data);
+        $globalPayments = new WebService(true);
+
+        $globalPayments->transaction($transaction);
+
+        $cancellation = new Cancellation([
+            'amount'           => $data['amount'],
+            'order'            => $data['order'],
+            'merchantCode'     => getenv('MERCHANT_CODE'),
+            'merchantTerminal' => getenv('MERCHANT_TERMINAL'),
+            'merchantKey'      => 'qwertyasdf0123456789',
+        ]);
+
+        $response = $globalPayments->cancelTransaction($cancellation);
+
+        $this->assertInstanceOf(TransactionRevoked::class, $response);
+        $this->assertEquals($data['amount'] * 100, $response->amount);
+        $this->assertEquals('0900', $response->response);
+        $this->assertEquals(3, $response->transactionType);
     }
 }
