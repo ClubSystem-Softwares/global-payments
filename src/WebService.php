@@ -44,7 +44,7 @@ class WebService
                     'Content-Type' => 'application/xml',
                     'SOAPAction'   => $payment->action(),
                 ],
-                'curl'    => [
+                'curl' => [
                     CURLOPT_SSL_VERIFYPEER => false,
                 ],
             ]);
