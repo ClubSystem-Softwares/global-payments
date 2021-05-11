@@ -43,7 +43,27 @@ $transaction = new Transaction([
     'merchantKey'      => $yourMerchantKey,
 ]);
 
-$invoice = (new WebService())->send($transaction);
+$invoice = (new WebService())->transaction($transaction);
+```
+
+Para cancelamento da cobrança, basta fazer da seguinte forma:
+```php
+<?php
+
+require_once __DIR__ . './vendor/autoload.php';
+
+use CSWeb\GlobalPayments\WebService;
+use CSweb\GlobalPayments\Cancellation;
+
+$cancellation = new Cancellation([
+    'amount'           => 10.00,
+    'order'            => $yourOrderNumber, // Order number deve ser o mesmo enviado ao executar o pagamento
+    'merchantCode'     => $yourMerchantCode,
+    'merchantTerminal' => $yourMerchantTerminal,
+    'merchantKey'      => $yourMerchantKey,
+]);
+
+$cancelledPayment = (new WebService())->cancelTransaction($cancellation);
 ```
 
 Em caso de ocorrer qualquer erro durante a chamada, o sistema irá
