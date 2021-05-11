@@ -1,0 +1,22 @@
+{
+    "CODIGO": "0",
+    "OPERACION": {
+        "Ds_Amount": "1000",
+        "Ds_Currency": "986",
+        "Ds_Order": "8052wekhnRHJ",
+        "Ds_Signature": "266819ADD7F00B21F07B3CC89F333BCB8B0824241FC8CB7C9CE6B993121E3E0D",
+        "Ds_MerchantCode": "012005733649001",
+        "Ds_Terminal": "1",
+        "Ds_Response": "0900",
+        "Ds_AuthorisationCode": "363860",
+        "Ds_TransactionType": "3",
+        "Ds_SecurePayment": "0",
+        "Ds_Language": "9",
+        "Ds_Card_Type": "C",
+        "Ds_MerchantData": {},
+        "Ds_Card_Country": "724",
+        "Ds_Nsu": "363860",
+        "Ds_Card_Brand": "1",
+        "Ds_ProcessedPayMethod": "3"
+    }
+}

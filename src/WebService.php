@@ -35,7 +35,7 @@ class WebService
         ]);
     }
 
-    public function send(GlobalPaymentInterface $payment): Invoice
+    protected function send(GlobalPaymentInterface $payment): string
     {
         try {
             $response = $this->client->post('/sis/services/SerClsWSEntrada', [
@@ -44,14 +44,12 @@ class WebService
                     'Content-Type' => 'application/xml',
                     'SOAPAction'   => $payment->action(),
                 ],
-                'curl' => [
+                'curl'    => [
                     CURLOPT_SSL_VERIFYPEER => false,
                 ],
             ]);
 
-            return $this->parseWebserviceSuccessResponse(
-                $response->getBody()->getContents()
-            );
+            return $response->getBody()->getContents();
         } catch (ClientException | ServerException $e) {
             $this->parseResponseError(
                 $e->getResponse()->getBody()->getContents()
@@ -79,7 +77,7 @@ class WebService
         throw new ServiceException('An error ocurred during your request. Please try again');
     }
 
-    protected function parseWebserviceSuccessResponse(string $message): Invoice
+    protected function parseWebserviceSuccessResponse(string $message): array
     {
         $dom = new DOMDocument();
         $dom->loadXML($message);
@@ -90,13 +88,44 @@ class WebService
             ServiceException::throwInternalError($xml->CODIGO);
         }
 
-        $invoice  = new Invoice($xml->OPERACION);
-        $response = (int)$invoice->response;
+        $operation    = $xml->OPERACION;
+        $responseCode = (int)$operation->Ds_Response;
 
-        if (!in_array($response, [0, 900, 400])) {
-            ServiceException::throwPaymentError($response);
+        if (!in_array($responseCode, [0, 900, 400])) {
+            ServiceException::throwPaymentError($responseCode);
         }
 
-        return $invoice;
+        $operation = json_decode(json_encode($operation), true);
+        $data      = [];
+
+        foreach ($operation as $property => $value) {
+            $property = str_replace(['Ds_', '_'], '', $property);
+            $property = Str::camel($property);
+
+            $data[$property] = $value;
+        }
+
+        return $data;
+    }
+
+    public function transaction(GlobalPaymentInterface $transaction): Invoice
+    {
+        $content  = $this->send($transaction);
+        $response = $this->parseWebserviceSuccessResponse($content);
+
+        return new Invoice($response);
+    }
+
+    public function cancelTransaction(GlobalPaymentInterface $transaction)
+    {
+        $content = $this->send($transaction);
+
+        $dom = new DOMDocument();
+        $dom->loadXML($content);
+
+
+        file_put_contents(__DIR__ . '/../tests/stubs/cancelamento.json', json_encode(simplexml_load_string($dom->textContent), JSON_PRETTY_PRINT));
+
+        return $content;
     }
 }
